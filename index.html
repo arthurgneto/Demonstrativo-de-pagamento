@@ -1,70 +1,246 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerador de Comprovante de Pagamento - Olacall</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gerador de Comprovante de Pagamento - Olacall</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #00724c, #68ce51);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      color: #333;
+    }
+
+    .container {
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+      width: 100%;
+      max-width: 500px;
+    }
+
+    h1, h2 {
+      text-align: center;
+      color: #00724c;
+      margin-bottom: 25px;
+    }
+
+    h3 {
+      color: #00724c;
+      margin-top: 20px;
+      margin-bottom: 10px;
+    }
+
+    form label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: #555;
+    }
+
+    form input[type="text"],
+    form input[type="number"],
+    form input[type="date"] {
+      width: calc(100% - 20px);
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    form button {
+      background: linear-gradient(to right, #00724c, #68ce51);
+      color: white;
+      padding: 12px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      width: 100%;
+      transition: opacity 0.3s ease;
+    }
+
+    form button:hover {
+      opacity: 0.9;
+    }
+
+    .receipt-preview {
+      border: 1px solid #eee;
+      padding: 25px;
+      margin-top: 30px;
+      border-radius: 5px;
+      background-color: #f9f9f9;
+      box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .receipt-preview p {
+      margin-bottom: 5px;
+      line-height: 1.5;
+    }
+
+    .receipt-preview strong {
+      color: #00724c;
+    }
+
+    hr {
+      border: 0;
+      height: 1px;
+      background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0));
+      margin: 20px 0;
+    }
+
+    p.total {
+      font-size: 1.2em;
+      font-weight: bold;
+      text-align: right;
+      margin-top: 20px;
+      color: #00724c;
+    }
+
+    #printReceipt {
+      margin-top: 25px;
+      background: linear-gradient(to right, #28a745, #5cb85c);
+    }
+
+    #printReceipt:hover {
+      opacity: 0.9;
+    }
+
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #receipt, #receipt * {
+        visibility: visible;
+      }
+      #receipt {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        box-shadow: none;
+        margin: 0;
+        padding: 0;
+      }
+      #printReceipt {
+        display: none;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Gerador de Comprovante de Pagamento <br>Olacall</h1>
-               <form id="paymentForm">
-            <label for="employeeName">Nome do Colaborador:</label>
-            <input type="text" id="employeeName" required>
+  <div class="container">
+    <h1>Gerador de Comprovante de Pagamento <br><span>Olacall</span></h1>
 
-            <label for="employeeRole">Cargo:</label>
-            <input type="text" id="employeeRole" required>
+    <form id="paymentForm">
+      <label for="employeeName">Nome do Colaborador:</label>
+      <input type="text" id="employeeName" name="employeeName" required>
 
-            <label for="employeeBank">Banco:</label>
-            <input type="text" id="employeeBank" required>
+      <label for="employeeRole">Cargo:</label>
+      <input type="text" id="employeeRole" name="employeeRole" required>
 
-            <label for="employeePix">Conta Pix:</label>
-            <input type="text" id="employeePix" required>
+      <label for="employeeBank">Banco:</label>
+      <input type="text" id="employeeBank" name="employeeBank" required>
 
-            <label for="daysWorked">Dias Trabalhados:</label>
-            <input type="number" id="daysWorked" min="0" required>
+      <label for="employeePix">Conta Pix:</label>
+      <input type="text" id="employeePix" name="employeePix" required>
 
-            <label for="internshipGrant">Bolsa Estágio:</label>
-            <input type="number" id="internshipGrant" step="0.01" required>
+      <label for="daysWorked">Dias Trabalhados:</label>
+      <input type="number" id="daysWorked" name="daysWorked" min="0" required>
 
-            <label for="transportCurrentMonth">Vale Transporte (Mês Atual):</label>
-            <input type="number" id="transportCurrentMonth" step="0.01" value="0">
+      <label for="internshipGrant">Bolsa Estágio (R$):</label>
+      <input type="number" id="internshipGrant" name="internshipGrant" step="0.01" required>
 
-            <label for="transportPreviousMonth">Vale Transporte (Mês Passado):</label>
-            <input type="number" id="transportPreviousMonth" step="0.01" value="0">
+      <label for="transportCurrentMonth">Vale Transporte (Mês Atual - R$):</label>
+      <input type="number" id="transportCurrentMonth" name="transportCurrentMonth" step="0.01" value="0">
 
-            <label for="paymentDate">Data de Pagamento:</label>
-            <input type="date" id="paymentDate" required>
+      <label for="transportPreviousMonth">Vale Transporte (Mês Anterior - R$):</label>
+      <input type="number" id="transportPreviousMonth" name="transportPreviousMonth" step="0.01" value="0">
 
-            <button type="submit">Gerar Comprovante</button>
-        </form>
+      <label for="paymentDate">Data de Pagamento:</label>
+      <input type="date" id="paymentDate" name="paymentDate" required>
 
-        <div id="receipt" class="receipt-preview" style="display:none;">
-            <h2>Demonstrativo de Pagamento bolsa estágio: <span id="receiptMonthYear"></span></h2>
-            <h2>Olá Call</h2>
-             <h3>CNPJ: 60.585.187/0001-64 </h3>
-        <h3>Edifício Centro Empresarial Rio Branco 1º andar, Sala 12 Rio Branco, 5,38 - Centro, Bauru/SP 17010-190</h3>
-            <p><strong>Empresa:</strong> Olacall</p>
-           <p><strong>Data de pagamento:</strong> <span id="receiptPaymentDate"></span></p>
-            <p><strong>Colaborador:</strong> <span id="receiptEmployeeName"></span></p>
-                       <p><strong>Cargo:</strong> <span id="receiptEmployeeRole"></span></p>
-            <p><strong>Banco:</strong> <span id="receiptEmployeeBank"></span></p>
-            <p><strong>Conta Pix:</strong> <span id="receiptEmployeePix"></span></p>
+      <button type="submit">Gerar Comprovante</button>
+    </form>
 
-            <hr> <h3>Proventos</h3>
-            <p><strong>Bolsa Estágio:</strong> R$ <span id="receiptInternshipGrant"></span></p>
-            <p><strong>Vale Transporte (Mês Julho):</strong> R$ <span id="receiptTransportCurrentMonth"></span></p>
-            <p><strong>Vale Transporte (Mês Junho):</strong> R$ <span id="receiptTransportPreviousMonth"></span></p>
-            <p><strong>Dias Trabalhados:</strong> <span id="receiptDaysWorked"></span></p>
+    <div id="receipt" class="receipt-preview" style="display: none;">
+      <h2>Demonstrativo de Pagamento - Bolsa Estágio: <span id="receiptMonthYear"></span></h2>
+      <h2>Olá Call</h2>
+      <h3>CNPJ: 60.585.187/0001-64</h3>
+      <h3>Edifício Centro Empresarial Rio Branco – 1º andar, Sala 12<br>
+        Rua Rio Branco, 5-38 – Centro, Bauru/SP – 17010-190</h3>
 
-            <hr>
+      <p><strong>Empresa:</strong> Olacall</p>
+      <p><strong>Data de Pagamento:</strong> <span id="receiptPaymentDate"></span></p>
+      <p><strong>Colaborador:</strong> <span id="receiptEmployeeName"></span></p>
+      <p><strong>Cargo:</strong> <span id="receiptEmployeeRole"></span></p>
+      <p><strong>Banco:</strong> <span id="receiptEmployeeBank"></span></p>
+      <p><strong>Conta Pix:</strong> <span id="receiptEmployeePix"></span></p>
 
-            <p class="total"><strong>Total Recebido:</strong> R$ <span id="receiptTotalReceived"></span></p>
-            <button id="printReceipt">Imprimir/Salvar PDF.</button>
-        </div>
+      <hr>
+      <h3>Proventos</h3>
+      <p><strong>Bolsa Estágio:</strong> R$ <span id="receiptInternshipGrant"></span></p>
+      <p><strong>Vale Transporte (Mês Atual):</strong> R$ <span id="receiptTransportCurrentMonth"></span></p>
+      <p><strong>Vale Transporte (Mês Anterior):</strong> R$ <span id="receiptTransportPreviousMonth"></span></p>
+      <p><strong>Dias Trabalhados:</strong> <span id="receiptDaysWorked"></span></p>
+
+      <hr>
+      <p class="total"><strong>Total Recebido:</strong> R$ <span id="receiptTotalReceived"></span></p>
+
+      <button id="printReceipt">Imprimir / Salvar PDF</button>
     </div>
+  </div>
 
-    <script src="script.js"></script>
+  <script>
+    document.getElementById('paymentForm').addEventListener('submit', function (event) {
+      event.preventDefault();
+
+      const employeeName = document.getElementById('employeeName').value;
+      const employeeRole = document.getElementById('employeeRole').value;
+      const employeeBank = document.getElementById('employeeBank').value;
+      const employeePix = document.getElementById('employeePix').value;
+      const daysWorked = Number(document.getElementById('daysWorked').value);
+      const internshipGrant = Number(document.getElementById('internshipGrant').value);
+      const transportCurrentMonth = Number(document.getElementById('transportCurrentMonth').value);
+      const transportPreviousMonth = Number(document.getElementById('transportPreviousMonth').value);
+      const paymentDate = document.getElementById('paymentDate').value;
+
+      const totalReceived = internshipGrant + transportCurrentMonth + transportPreviousMonth;
+
+      function formatCurrency(value) {
+        return isNaN(value) ? '0,00' : value.toFixed(2).replace('.', ',');
+      }
+
+      document.getElementById('receiptEmployeeName').textContent = employeeName;
+      document.getElementById('receiptEmployeeRole').textContent = employeeRole;
+      document.getElementById('receiptEmployeeBank').textContent = employeeBank;
+      document.getElementById('receiptEmployeePix').textContent = employeePix;
+      document.getElementById('receiptDaysWorked').textContent = daysWorked;
+      document.getElementById('receiptInternshipGrant').textContent = formatCurrency(internshipGrant);
+      document.getElementById('receiptTransportCurrentMonth').textContent = formatCurrency(transportCurrentMonth);
+      document.getElementById('receiptTransportPreviousMonth').textContent = formatCurrency(transportPreviousMonth);
+      document.getElementById('receiptTotalReceived').textContent = formatCurrency(totalReceived);
+
+      const dateObj = new Date(`${paymentDate}T00:00:00-03:00`);
+      document.getElementById('receiptPaymentDate').textContent = dateObj.toLocaleDateString('pt-BR');
+
+      const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+      const year = dateObj.getFullYear();
+      document.getElementById('receiptMonthYear').textContent = `${month}/${year}`;
+
+      document.getElementById('receipt').style.display = 'block';
+    });
+
+    document.getElementById('printReceipt').addEventListener('click', function () {
+      window.print();
+    });
+  </script>
 </body>
 </html>
