@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Comprovante de Pagamento - Olacall</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Gerador de Comprovante de Pagamento <br>Olacall</h1>
+               <form id="paymentForm">
+            <label for="employeeName">Nome do Colaborador:</label>
+            <input type="text" id="employeeName" required>
+
+            <label for="employeeCpf">CPF do Colaborador:</label>
+            <input type="text" id="employeeCpf" placeholder="Ex: 000.000.000-00" required>
+
+            <label for="employeeRole">Cargo:</label>
+            <input type="text" id="employeeRole" required>
+
+            <label for="employeeBank">Banco:</label>
+            <input type="text" id="employeeBank" required>
+
+            <label for="employeePix">Conta Pix:</label>
+            <input type="text" id="employeePix" required>
+
+            <label for="daysWorked">Dias Trabalhados:</label>
+            <input type="number" id="daysWorked" min="0" required>
+
+            <label for="internshipGrant">Bolsa Estágio:</label>
+            <input type="number" id="internshipGrant" step="0.01" required>
+
+            <label for="transportCurrentMonth">Vale Transporte (Mês Atual):</label>
+            <input type="number" id="transportCurrentMonth" step="0.01" value="0">
+
+            <label for="transportPreviousMonth">Vale Transporte (Mês Passado):</label>
+            <input type="number" id="transportPreviousMonth" step="0.01" value="0">
+
+            <label for="paymentDate">Data de Pagamento:</label>
+            <input type="date" id="paymentDate" required>
+
+            <button type="submit">Gerar Comprovante</button>
+        </form>
+
+        <div id="receipt" class="receipt-preview" style="display:none;">
+            <h2>Demonstrativo de Pagamento bolsa estágio: <span id="receiptMonthYear"></span></h2>
+            <h2>Olá Call</h2>
+             <h3>CNPJ: 60.585.187/0001-64 </h3>
+        <h3>Edifício Centro Empresarial Rio Branco 1º andar, Sala 12 Rio Branco, 5,38 - Centro, Bauru/SP 17010-190</h3>
+            <p><strong>Empresa:</strong> Olacall</p>
+           <p><strong>Data de pagamento:</strong> <span id="receiptPaymentDate"></span></p>
+            <p><strong>Colaborador:</strong> <span id="receiptEmployeeName"></span></p>
+            <p><strong>CPF:</strong> <span id="receiptEmployeeCpf"></span></p>
+            <p><strong>Cargo:</strong> <span id="receiptEmployeeRole"></span></p>
+            <p><strong>Banco:</strong> <span id="receiptEmployeeBank"></span></p>
+            <p><strong>Conta Pix:</strong> <span id="receiptEmployeePix"></span></p>
+
+            <hr> <h3>Proventos</h3>
+            <p><strong>Bolsa Estágio:</strong> R$ <span id="receiptInternshipGrant"></span></p>
+            <p><strong>Vale Transporte (Mês Atual):</strong> R$ <span id="receiptTransportCurrentMonth"></span></p>
+            <p><strong>Vale Transporte (Mês Passado):</strong> R$ <span id="receiptTransportPreviousMonth"></span></p>
+            <p><strong>Dias Trabalhados:</strong> <span id="receiptDaysWorked"></span></p>
+
+            <hr>
+
+            <p class="total"><strong>Total Recebido:</strong> R$ <span id="receiptTotalReceived"></span></p>
+            <button id="printReceipt">Imprimir/Salvar PDF.</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
