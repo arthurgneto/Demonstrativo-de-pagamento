@@ -141,28 +141,22 @@
 
     <form id="paymentForm">
       <label for="employeeName">Nome do Colaborador:</label>
-      <input type="text" id="employeeName" name="employeeName" required>
+      <input type="text" id="employeeName" required>
 
       <label for="employeeRole">Cargo:</label>
-      <input type="text" id="employeeRole" name="employeeRole" required>
+      <input type="text" id="employeeRole" required>
 
       <label for="employeeBank">Banco:</label>
-      <input type="text" id="employeeBank" name="employeeBank" required>
+      <input type="text" id="employeeBank" required>
 
       <label for="employeePix">Conta Pix:</label>
-      <input type="text" id="employeePix" name="employeePix" required>
+      <input type="text" id="employeePix" required>
 
       <label for="daysWorked">Dias Trabalhados:</label>
-      <input type="number" id="daysWorked" name="daysWorked" min="0" required>
+      <input type="number" id="daysWorked" min="0" required>
 
-      <label for="internshipGrant">Bolsa Estágio (R$):</label>
-      <input type="number" id="internshipGrant" name="internshipGrant" step="0.01" required>
-
-      <label for="transportCurrentMonth">Vale Transporte:</label>
-      <input type="number" id="transportCurrentMonth" name="transportCurrentMonth" step="0.01" value="0">
-
-           <label for="paymentDate">Data de Pagamento:</label>
-      <input type="date" id="paymentDate" name="paymentDate" required>
+      <label for="paymentDate">Data de Pagamento:</label>
+      <input type="date" id="paymentDate" required>
 
       <button type="submit">Gerar Comprovante</button>
     </form>
@@ -184,7 +178,7 @@
       <hr>
       <h3>Proventos</h3>
       <p><strong>Bolsa Estágio:</strong> R$ <span id="receiptInternshipGrant"></span></p>
-      <p><strong>Vale Transporte:</strong> R$ <span id="receiptTransportCurrentMonth"></span></p>
+      <p><strong>Vale Transporte:</strong> R$ <span id="receiptValeTransporte"></span></p>
       <p><strong>Dias Trabalhados:</strong> <span id="receiptDaysWorked"></span></p>
 
       <hr>
@@ -203,15 +197,14 @@
       const employeeBank = document.getElementById('employeeBank').value;
       const employeePix = document.getElementById('employeePix').value;
       const daysWorked = Number(document.getElementById('daysWorked').value);
-      const internshipGrant = Number(document.getElementById('internshipGrant').value);
-      const transportCurrentMonth = Number(document.getElementById('transportCurrentMonth').value);
-      const transportPreviousMonth = Number(document.getElementById('transportPreviousMonth').value);
       const paymentDate = document.getElementById('paymentDate').value;
 
-      const totalReceived = internshipGrant + transportCurrentMonth + transportPreviousMonth;
+      const bolsaEstagio = daysWorked * 30;
+      const valeTransporte = daysWorked * 5.75;
+      const totalRecebido = bolsaEstagio + valeTransporte;
 
       function formatCurrency(value) {
-        return isNaN(value) ? '0,00' : value.toFixed(2).replace('.', ',');
+        return value.toFixed(2).replace('.', ',');
       }
 
       document.getElementById('receiptEmployeeName').textContent = employeeName;
@@ -219,14 +212,12 @@
       document.getElementById('receiptEmployeeBank').textContent = employeeBank;
       document.getElementById('receiptEmployeePix').textContent = employeePix;
       document.getElementById('receiptDaysWorked').textContent = daysWorked;
-      document.getElementById('receiptInternshipGrant').textContent = formatCurrency(internshipGrant);
-      document.getElementById('receiptTransportCurrentMonth').textContent = formatCurrency(transportCurrentMonth);
-      document.getElementById('receiptTransportPreviousMonth').textContent = formatCurrency(transportPreviousMonth);
-      document.getElementById('receiptTotalReceived').textContent = formatCurrency(totalReceived);
+      document.getElementById('receiptInternshipGrant').textContent = formatCurrency(bolsaEstagio);
+      document.getElementById('receiptValeTransporte').textContent = formatCurrency(valeTransporte);
+      document.getElementById('receiptTotalReceived').textContent = formatCurrency(totalRecebido);
 
       const dateObj = new Date(`${paymentDate}T00:00:00-03:00`);
       document.getElementById('receiptPaymentDate').textContent = dateObj.toLocaleDateString('pt-BR');
-
       const month = String(dateObj.getMonth() + 1).padStart(2, '0');
       const year = dateObj.getFullYear();
       document.getElementById('receiptMonthYear').textContent = `${month}/${year}`;
